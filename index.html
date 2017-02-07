@@ -33,21 +33,42 @@
 
 		body {
 			background: #2a4af5; /* Old Browsers */
-			background: linear-gradient(to top left, #2a4af5 0%, #62eada 100%); /*Standard*/
+			background: linear-gradient(to top left, #62eada 0%, #2a4af5 100%); /*Standard*/
 
 			color: white;
 
 			font-family: 'Space Mono', monospace;
-			font-size: 16px;
+			font-size: 20px;
+			-webkit-font-smoothing: antialiased;
 
 			padding: 30px;
-			-webkit-font-smoothing: antialiased;
+			margin: 0 auto;
+
+			max-width: 480px;
 		}
+
+			@media (min-width: 640px) {
+				body {
+					max-width: 100%;
+				}
+			}
 
 		.logo {
 			width: 150px;
 			display: block;
-			margin: 30px auto;
+			margin: 0 auto 30px;
+		}
+
+		form {
+
+		}
+
+		@media (min-width: 640px) {
+			form {
+				text-align: right;
+				max-width: 600px;
+				margin: 0 auto;
+			}
 		}
 
 		label {
@@ -55,7 +76,14 @@
 			width: 40%;
 			text-align: right;
 			padding-right: 20px;
+			vertical-align: middle;
 		}
+
+			@media (min-width: 640px) {
+				label {
+					width: auto;
+				}
+			}
 
 		input {
 			color: black;
@@ -63,7 +91,15 @@
 			width: 60%;
 			margin: 15px 0;
 			border-radius: 3px;
+			line-height: 50px;
+			padding: 0 10px;
 		}
+
+			@media (min-width: 640px) {
+				input {
+					width: 200px;
+				}
+			}
 
 		p {
 			text-align: right;
@@ -71,7 +107,15 @@
 
 		p span {
 			display: block;
+			font-size: 3em;
 		}
+
+			@media (min-width: 640px) {
+				p span {
+					display: inline-block;
+					vertical-align: middle;
+				}
+			}
 	</style>
 </head>
 
