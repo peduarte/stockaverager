@@ -105,6 +105,14 @@
 			font-size: 3em;
 		}
 
+		p span:before {
+			content: "$";
+		}
+
+		p span:empty:before {
+			opacity: 0.3;
+		}
+
 			@media (min-width: 640px) {
 				p span {
 					display: inline-block;
@@ -120,18 +128,20 @@
 
 		<form>
 			<fieldset>
-				<label for="">I have</label><input type="text" name="" value="">
+				<label for="">I have</label><input type="text" id="shares-present">
 
-				<label for="">at</label><input type="text" name="" value="">
+				<label for="">at</label><input type="text" id="price-present">
 			</fieldset>
 
 			<fieldset>
-				<label for="">If I buy</label><input type="text" name="" value="">
+				<label for="">If I buy</label><input type="text" id="shares-future">
 
-				<label for="">at</label><input type="text" name="" value="">
+				<label for="">at</label><input type="text" id="price-future">
 			</fieldset>
 
-			<p>New Average per stock: <span>$14.26</span></p>
+			<button type="button" onclick="calcForm()">submit</button>
+
+			<p>New Average per stock: <span id="avarage-price"></span></p>
 		</form>
 
 
@@ -160,6 +170,46 @@
 			element.className = element.className.replace(className, '').trim();
 		}
 
+		var currentSharesEl = document.getElementById('shares-present');
+		var currentPriceEl = document.getElementById('price-present');
+		var futureSharesEl = document.getElementById('shares-future');
+		var futurePriceEl = document.getElementById('price-future');
+		var avaragePriceEl = document.getElementById('avarage-price');
+
+		function calcForm() {
+			var currentShares = Number(currentSharesEl.value);
+			var currentPrice = Number(currentPriceEl.value);
+			var futureShares = Number(futureSharesEl.value);
+			var futurePrice = Number(futurePriceEl.value);
+
+			var EShares = currentShares + futureShares;
+
+			var FPrice = ((currentShares * currentPrice) + (futureShares * futurePrice)) / EShares;
+
+			avaragePriceEl.innerHTML = formatCurrency(FPrice);
+		}
+
+		function formatCurrency(number) {
+			number = Math.round(number*10000)/10000;
+			var decimalPart = Math.round((number - Math.floor(number))*10000)/10000;
+			decimalPart = decimalPart + "";
+
+			if (decimalPart.length <= 3) {
+				places = 2;
+			} else {
+				places = -1;
+			}
+
+			console.log(number);
+			return number;
+
+			// var numTest = new NumberFormat(number);
+			// numTest.setCurrency(false);
+			// numTest.setCommas(false);
+			// numTest.setPlaces(places);
+			// numTest.setCurrencyPrefix('$');
+			// return(numTest.toFormatted());
+		}
 
 
 		// (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
