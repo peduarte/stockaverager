@@ -127,8 +127,12 @@
 		}
 
 
-		#present-shares::before {
-			content: "stocks"
+		.input-transparent {
+			position: absolute;
+			top: 0;
+			left: 0;
+			background: transparent;
+			/*color: transparent;*/
 		}
 
 		p span {
@@ -159,15 +163,29 @@
 
 		<form>
 			<fieldset>
-				<label class="label">I have</label><label class="input-wrapper -shares"><input type="tel" id="present-shares" value="2 stocks" data-value="2"></label>
+				<label class="label">I have</label><!--
+				--><label class="input-wrapper -shares">
+						<input type="text" id="current-shares-ghost" value="stocks" tabindex="-1" style="text-indent: 2ch;">
+						<input type="text" id="current-shares" class="field input-transparent" value="2">
+					</label>
 
-				<label class="label">at</label><label class="input-wrapper -price"><input type="tel" id="present-price"></label>
+				<label class="label">at</label><!--
+				--><label class="input-wrapper -price">
+						<input type="text" id="current-price" class="field">
+					</label>
 			</fieldset>
 
 			<fieldset>
-				<label class="label">If I buy</label><label class="input-wrapper -shares"><input type="tel" id="future-shares" value="2 stocks" data-value="2"></label>
+				<label class="label">If I buy</label><!--
+				--><label class="input-wrapper -shares">
+						<input type="text" id="future-shares-ghost" value="stock" tabindex="-1" style="text-indent: 2ch;">
+						<input type="text" id="future-shares" class="field input-transparent" value="1">
+				</label>
 
-				<label class="label">at</label><label class="input-wrapper -price"><input type="tel" id="future-price"></label>
+				<label class="label">at</label><!--
+				--><label class="input-wrapper -price">
+						<input type="text" id="future-price" class="field">
+				</label>
 			</fieldset>
 
 			<p>New Average per stock: <span id="avarage-price"></span></p>
@@ -199,29 +217,28 @@
 			element.className = element.className.replace(className, '').trim();
 		}
 
-		var currentSharesEl = document.getElementById('present-shares');
-		var currentPriceEl = document.getElementById('present-price');
+		var currentSharesEl = document.getElementById('current-shares');
+		var currentSharesGhostEl = document.getElementById('current-shares-ghost');
+		var currentPriceEl = document.getElementById('current-price');
 		var futureSharesEl = document.getElementById('future-shares');
+		var futureSharesGhostEl = document.getElementById('future-shares-ghost');
 		var futurePriceEl = document.getElementById('future-price');
 		var avaragePriceEl = document.getElementById('avarage-price');
 
 		function calcForm() {
-			var currentShares = Number(currentSharesEl.getAttribute('data-value'));
-			console.log(currentShares);
-			var currentPrice = Number(currentPriceEl.value);
-			console.log(currentPrice);
-			var futureShares = Number(futureSharesEl.getAttribute('data-value'));
-			console.log(futureShares);
-			var futurePrice = Number(futurePriceEl.value);
-			console.log(futurePrice);
+			var currentShares = (currentSharesEl.value * 1);
+			console.log('currentShares', currentShares);
+			var currentPrice = (currentPriceEl.value * 1);
+			console.log('currentPrice', currentPrice);
+			var futureShares = (futureSharesEl.value * 1);
+			console.log('futureShares', futureShares);
+			var futurePrice = (futurePriceEl.value * 1);
+			console.log('futurePrice', futurePrice);
+			console.log(' ');
 
 			var averagePrice = ((currentShares * currentPrice) + (futureShares * futurePrice)) / currentShares + futureShares;
 
-			if (!isNaN(averagePrice) && isFinite(averagePrice)) {
-				avaragePriceEl.innerHTML = formatCurrency(averagePrice);
-			} else {
-				avaragePriceEl.innerHTML = '';
-			}
+			avaragePriceEl.innerHTML = formatCurrency(averagePrice);
 		}
 
 		function formatCurrency(number) {
@@ -241,29 +258,34 @@
 			return(formattedNumber.toFormatted());
 		}
 
-		var fields = document.querySelectorAll('input');
+		var fields = document.querySelectorAll('.field');
 
-		function onFieldKeydown(event) {
+		function onFieldKeyup(event) {
+			// do nothing if is tab
+			if (event.keyCode === 9) { return; }
+
 			var field = event.target;
-			if (field === currentSharesEl || field === futureSharesEl) {
-				var value = field.value.split(' stocks');
-				field.setAttribute('data-value', value[0]);
-				field.value = value[0] + ' stocks';
-				field.selectionStart = field.selectionEnd = value[0].length;
+			if (field === currentSharesEl) {
+				var term = Number(field.value) > 1 ? 'stocks' : 'stock';
+				currentSharesGhostEl.style.textIndent = field.value.length + 1 + 'ch';
+				currentSharesGhostEl.value = term;
+			}
+
+			if (field === futureSharesEl) {
+				var term = Number(field.value) > 1 ? 'stocks' : 'stock';
+				futureSharesGhostEl.style.textIndent = field.value.length + 1 + 'ch';
+				futureSharesGhostEl.value = term;
 			}
 
 			calcForm();
 		}
 
 		function onFieldFocus(event) {
-			var field = event.target;
-			if (field === currentSharesEl || field === futureSharesEl) {
-				field.value = '';
-			}
+			event.target.value = '';
 		}
 
 		Array.prototype.slice.call(fields).forEach(function(field) {
-			field.addEventListener('keydown', onFieldKeydown);
+			field.addEventListener('keyup', onFieldKeyup);
 			field.addEventListener('focus', onFieldFocus);
 		});
 
