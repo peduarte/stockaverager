@@ -126,6 +126,10 @@
 			text-indent: 1ch;
 		}
 
+		.input-ghost {
+			background: white;
+			color: black;
+		}
 
 		.input-transparent {
 			position: absolute;
@@ -165,7 +169,7 @@
 			<fieldset>
 				<label class="label">I have</label><!--
 				--><label class="input-wrapper -shares">
-						<input type="text" id="current-shares-ghost" disabled value="stocks" tabindex="-1" style="text-indent: 2ch;">
+						<input type="text" id="current-shares-ghost" class="input-ghost" disabled value="stocks" tabindex="-1" style="text-indent: 2ch;">
 						<input type="text" id="current-shares" class="field input-transparent" value="2">
 					</label>
 
@@ -178,7 +182,7 @@
 			<fieldset>
 				<label class="label">If I buy</label><!--
 				--><label class="input-wrapper -shares">
-						<input type="text" id="future-shares-ghost" disabled value="stock" tabindex="-1" style="text-indent: 2ch;">
+						<input type="text" id="future-shares-ghost" class="input-ghost" disabled value="stock" tabindex="-1" style="text-indent: 2ch;">
 						<input type="text" id="future-shares" class="field input-transparent" value="1">
 				</label>
 
