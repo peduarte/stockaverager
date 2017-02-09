@@ -114,7 +114,6 @@
 		}
 
 		input {
-			color: black;
 			border-radius: 3px;
 			padding: 0 10px;
 			display: block;
@@ -128,8 +127,13 @@
 
 		.input-ghost {
 			background: white;
-			color: black;
 			opacity: 1;
+		}
+
+		input,
+		.input-ghost,
+		.input-wrapper.-price::before {
+			color: rgba(0, 0, 0, 0.5);
 		}
 
 		.input-transparent {
@@ -171,12 +175,12 @@
 				<label class="label">I have</label><!--
 				--><label class="input-wrapper -shares">
 						<input type="text" id="current-shares-ghost" class="input-ghost" disabled value="stocks" tabindex="-1" style="text-indent: 2ch;">
-						<input type="text" id="current-shares" class="field input-transparent" value="2">
+						<input type="number" min="0" id="current-shares" class="field input-transparent" value="2">
 					</label>
 
 				<label class="label">at</label><!--
 				--><label class="input-wrapper -price">
-						<input type="text" id="current-price" class="field">
+						<input type="number" min="0" id="current-price" class="field">
 					</label>
 			</fieldset>
 
@@ -184,12 +188,12 @@
 				<label class="label">If I buy</label><!--
 				--><label class="input-wrapper -shares">
 						<input type="text" id="future-shares-ghost" class="input-ghost" disabled value="stock" tabindex="-1" style="text-indent: 2ch;">
-						<input type="text" id="future-shares" class="field input-transparent" value="1">
+						<input type="number" min="0" id="future-shares" class="field input-transparent" value="1">
 				</label>
 
 				<label class="label">at</label><!--
 				--><label class="input-wrapper -price">
-						<input type="text" id="future-price" class="field">
+						<input type="number" min="0" id="future-price" class="field">
 				</label>
 			</fieldset>
 
@@ -236,14 +240,7 @@
 			var futureShares = Number(futureSharesEl.value);
 			var futurePrice = Number(futurePriceEl.value);
 
-			console.log('currentShares', currentShares);
-			console.log('currentPrice', currentPrice);
-			console.log('futureShares', futureShares);
-			console.log('futurePrice', futurePrice);
-			console.log(' ');
-
 			var totalShares = currentShares + futureShares;
-
 			var averagePrice = ((currentShares * currentPrice) + (futureShares * futurePrice)) / totalShares;
 
 			avaragePriceEl.innerHTML = formatCurrency(averagePrice);
@@ -268,33 +265,49 @@
 
 		var fields = document.querySelectorAll('.field');
 
-		function onFieldKeyup(event) {
-			// do nothing if is tab
-			if (event.keyCode === 9) { return; }
+		function updateField(eventType, field) {
+			var spacesToAdd = eventType === 'keydown' ? 2 : 1;
+			var ghostField;
 
-			var field = event.target;
-			if (field === currentSharesEl) {
-				var term = Number(field.value) > 1 ? 'stocks' : 'stock';
-				currentSharesGhostEl.style.textIndent = field.value.length + 1 + 'ch';
-				currentSharesGhostEl.value = term;
-			}
+			if (field === currentSharesEl) { ghostField = currentSharesGhostEl; }
+			if (field === futureSharesEl) { ghostField = futureSharesGhostEl; }
 
-			if (field === futureSharesEl) {
+			if (field === currentSharesEl || field === futureSharesEl) {
 				var term = Number(field.value) > 1 ? 'stocks' : 'stock';
-				futureSharesGhostEl.style.textIndent = field.value.length + 1 + 'ch';
-				futureSharesGhostEl.value = term;
+				ghostField.style.textIndent = field.value.length + spacesToAdd + 'ch';
+				ghostField.value = term;
 			}
 
 			calcForm();
 		}
 
+		function onFieldKeyDown(event) {
+			// do nothing if is tab
+			if (event.keyCode === 9) { return; }
+			updateField(event.type, event.target);
+		}
+
+		function onFieldChange(event) {
+			updateField(event.type, event.target);
+		}
+
 		function onFieldFocus(event) {
+			var value = event.target.value;
 			event.target.value = '';
+
+			event.target.addEventListener('blur', function(event) {
+				if (event.target.value === '') {
+					event.target.value = value;
+				}
+				event.target.removeEventListener(event.type, arguments.callee);
+			});
 		}
 
 		Array.prototype.slice.call(fields).forEach(function(field) {
-			field.addEventListener('keyup', onFieldKeyup);
+			field.addEventListener('keydown', onFieldKeyDown);
+			field.addEventListener('change', onFieldChange);
 			field.addEventListener('focus', onFieldFocus);
+			// field.addEventListener('blur', onFieldBlur);
 		});
 
 		// mredkj.com
