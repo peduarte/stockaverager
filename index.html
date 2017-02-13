@@ -8,14 +8,14 @@
 
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content="Stock Averager" />
-	<meta name="twitter:description" content="Calculate the avarage of your new stock." />
+	<meta name="twitter:description" content="Calculate the average of your new stock." />
 	<meta name="twitter:url" content="http://stockaverager.com/" />
 	<meta name="twitter:image" content="http://stockaverager.com/postcard.png" />
 
 	<meta property="og:url" content="http://stockaverager.com/" />
 	<meta property="og:image" content="http://stockaverager.com/postcard.png" />
 	<meta property="og:title" content="Stock Averager" />
-	<meta property="og:description" content="Calculate the avarage of your new stock." />
+	<meta property="og:description" content="Calculate the average of your new stock." />
 
 	<link rel="icon" type="image/png" href="http://stockaverager.com/icon@16.png" sizes="16x16">
 	<link rel="icon" type="image/png" href="http://stockaverager.com/icon@32.png" sizes="32x32">
@@ -226,7 +226,7 @@
 				</label>
 			</fieldset>
 
-			<p>My new Average per stock: <span id="avarage-price"></span></p>
+			<p>My new Average per stock: <span id="average-price"></span></p>
 		</form>
 	</div>
 
@@ -260,7 +260,7 @@
 		var futureSharesEl = document.getElementById('future-shares');
 		var futureSharesGhostEl = document.getElementById('future-shares-ghost');
 		var futurePriceEl = document.getElementById('future-price');
-		var avaragePriceEl = document.getElementById('avarage-price');
+		var averagePriceEl = document.getElementById('average-price');
 
 		function calcForm() {
 			var currentShares = Number(currentSharesEl.value);
@@ -268,10 +268,17 @@
 			var futureShares = Number(futureSharesEl.value);
 			var futurePrice = Number(futurePriceEl.value);
 
+			if (currentShares === 0 ||
+				currentPrice === 0 ||
+				futureShares === 0 ||
+				futurePrice === 0) {
+				return null;
+			}
+
 			var totalShares = currentShares + futureShares;
 			var averagePrice = ((currentShares * currentPrice) + (futureShares * futurePrice)) / totalShares;
 
-			avaragePriceEl.innerHTML = formatCurrency(averagePrice);
+			averagePriceEl.innerHTML = formatCurrency(averagePrice);
 		}
 
 		function formatCurrency(number) {
