@@ -293,7 +293,7 @@
 
 		var fields = document.querySelectorAll('.field');
 
-		function updateField(eventType, field) {
+		function updateField(field) {
 			var spacesToAdd = 1;
 			var ghostField;
 
@@ -311,8 +311,8 @@
 
 		function onFieldKeyUp(event) {
 			// do nothing if is tab
-			if (event.keyCode === 9) { return; }
-			updateField(event.type, event.target);
+			// if (event.keyCode === 9) { return; }
+			updateField(event.target);
 		}
 
 		function onFieldKeyDown() {
@@ -320,7 +320,7 @@
 		}
 
 		function onFieldChange(event) {
-			updateField(event.type, event.target);
+			updateField(event.target);
 		}
 
 		function onFieldFocus(event) {
@@ -330,6 +330,7 @@
 			event.target.addEventListener('blur', function(event) {
 				if (event.target.value === '') {
 					event.target.value = value;
+					updateField(event.target)
 				}
 				event.target.removeEventListener(event.type, arguments.callee);
 			});
